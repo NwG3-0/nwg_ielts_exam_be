@@ -1,8 +1,10 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import jwt from 'jsonwebtoken'
 import { con } from '../index'
 
 dayjs.extend(utc)
+const ONE_DAY_IN_SECOND = 86400
 
 export const authFacebook = async (req, res, next) => {
   try {
@@ -39,13 +41,21 @@ export const authFacebook = async (req, res, next) => {
           },
         )
       } else {
+        const jwtToken = jwt.sign(
+          { name: results[0].Name, email: results[0].Email, isActived: results[0].IsActived },
+          process.env.JWT_SECRET_KEY ?? '',
+          {
+            expiresIn: Number(process.env.JWT_EXPIRATION_DURATION ?? ONE_DAY_IN_SECOND),
+          },
+        )
+
         res.send({
           success: true,
           data: {
             name: results[0].Name,
             email: results[0].Email,
             image: results[0].Image,
-            isActived: results[0].IsActived,
+            token: jwtToken,
           },
         })
       }

@@ -17,8 +17,8 @@ export const registerAdmin = async (req, res, next) => {
     const currentTime = dayjs.utc().format('YYYY-MM-DD HH:mm:ss')
 
     con.query(
-      'INSERT INTO admin ( Username, Password, CreatedAt ) VALUES ( ?, ?, ? )',
-      [username, hashPassword, currentTime],
+      'INSERT INTO admin ( Username, Password, IsActived, CreatedAt ) VALUES ( ?, ?, ?, ? )',
+      [username, hashPassword, true, currentTime],
       (error, _results) => {
         if (error) {
           if (error.errno === 1062) {
@@ -44,16 +44,24 @@ export const loginAdmin = (req, res, _next) => {
   }
 
   con.query('SELECT * FROM admin WHERE Username = ? LIMIT 1', [username], (error, result: any) => {
-    if (result.length === 0) {
+    if (error) {
+      res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+    }
+
+    if (typeof result === 'undefined' || result.length === 0) {
       res
         .status(StatusCodes.BAD_REQUEST)
         .json({ success: false, data: null, message: 'Invalid username! Please register' })
     } else {
       const hashPassword = bcrypt.compareSync(password, result[0].Password)
 
-      const jwtToken = jwt.sign({ email: result[0].Username }, process.env.JWT_SECRET_KEY ?? '', {
-        expiresIn: Number(process.env.JWT_EXPIRATION_DURATION ?? ONE_DAY_IN_SECOND),
-      })
+      const jwtToken = jwt.sign(
+        { email: result[0].Username, isActived: result[0].IsActived },
+        process.env.JWT_SECRET_KEY ?? '',
+        {
+          expiresIn: Number(process.env.JWT_EXPIRATION_DURATION ?? ONE_DAY_IN_SECOND),
+        },
+      )
 
       if (hashPassword) {
         res.status(StatusCodes.OK).json({ success: true, message: 'Login successfully', token: jwtToken })

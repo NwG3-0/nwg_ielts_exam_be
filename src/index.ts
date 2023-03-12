@@ -9,10 +9,13 @@ import bodyParser from 'body-parser'
 import authRoutes from './routers/auth.router'
 import adminRoutes from './routers/admin.route'
 import readingRoutes from './routers/reading.router'
+import vipMembersRoutes from './routers/vipMember.router'
 import { middleware } from './middlewares/passport'
 import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken'
 import { cors } from './utils/cors'
 import { StatusCodes, getReasonPhrase } from 'http-status-codes'
+import { vipAccountMiddleware } from './middlewares'
+import { createClient } from 'redis'
 
 const DEFAULT_SERVER_PORT = 4000
 const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : DEFAULT_SERVER_PORT
@@ -32,6 +35,8 @@ con.connect((error) => {
 
 const app = express()
 app.use(morgan('combined'))
+export let client
+
 app.use(cors)
 
 middleware()
@@ -74,5 +79,27 @@ app.use((req, res, next) => {
 
 app.use(readingRoutes)
 
-app.listen(SERVER_PORT)
+app.use(vipAccountMiddleware)
+app.use(vipMembersRoutes)
+
+app.listen(SERVER_PORT, async () => {
+  try {
+    client = createClient({
+      password: 'CSS1oCiwEiNcXmxAgNVQLotY1xrdtrP8',
+      socket: {
+        host: 'redis-16663.c292.ap-southeast-1-1.ec2.cloud.redislabs.com',
+        port: 16663,
+      },
+    })
+
+    client.on('error', () => {
+      console.log('Redis Client has been connect error')
+    })
+
+    await client.connect()
+    console.log('Connect to Redis server')
+  } catch (error) {
+    console.log(error)
+  }
+})
 console.log(`Example app listening on port ${SERVER_PORT}`)
