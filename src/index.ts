@@ -8,7 +8,8 @@ import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import authRoutes from './routers/auth.router'
 import adminRoutes from './routers/admin.route'
-import readingRoutes from './routers/reading.router'
+import publicRoutes from './routers/public.route'
+import privateRoutes from './routers/private.router'
 import vipMembersRoutes from './routers/vipMember.router'
 import { middleware } from './middlewares/passport'
 import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken'
@@ -46,6 +47,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: '30mb' }))
 
 app.use(adminRoutes)
+app.use(publicRoutes)
 
 // Verify access token
 app.use((req, res, next) => {
@@ -77,10 +79,9 @@ app.use((req, res, next) => {
   }
 })
 
-app.use(readingRoutes)
-
 app.use(vipAccountMiddleware)
 app.use(vipMembersRoutes)
+app.use(privateRoutes)
 
 app.listen(SERVER_PORT, async () => {
   try {

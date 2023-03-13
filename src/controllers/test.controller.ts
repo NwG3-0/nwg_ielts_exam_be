@@ -5,14 +5,14 @@ import { con } from '..'
 
 dayjs.extend(utc)
 
-export const getReadingQuestion = (req, res, _next) => {
-  const { id_passage } = req.query
+export const getTest = (req, res, _next) => {
+  const { id_book } = req.query
 
-  if (!id_passage) {
+  if (!id_book) {
     res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: 'Invalid ID Book' })
   }
 
-  con.query('SELECT * FROM question_reading WHERE Id_passage = ?', [Number(id_passage)], (error, result) => {
+  con.query('SELECT * FROM test WHERE Id_book = ?', [Number(id_book)], (error, result) => {
     if (error) {
       res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
     } else {
@@ -21,19 +21,19 @@ export const getReadingQuestion = (req, res, _next) => {
   })
 }
 
-export const createReadingQuestion = (req, res, _next) => {
-  const { id_passage, question, title_question } = req.body
+export const createTest = (req, res, _next) => {
+  const { number_test, id_book } = req.body
 
   const currentTime = dayjs.utc().format('YYYY-MM-DD HH:mm:ss')
 
   con.query(
-    'INSERT INTO reading (Id_passage, Question, Title_question, CreatedAt) VALUES (?, ?, ?, ?)',
-    [id_passage, question, title_question, currentTime],
+    'INSERT INTO test (Id_book, NumberTest, CreatedAt) VALUES (?, ?, ?, ?)',
+    [id_book, number_test, currentTime],
     (error, _result) => {
       if (error) {
         res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
       } else {
-        res.status(StatusCodes.OK).json({ success: true, data: null, message: 'Create reading content success ' })
+        res.status(StatusCodes.OK).json({ success: true, data: null, message: 'Create test success ' })
       }
     },
   )
