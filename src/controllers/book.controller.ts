@@ -25,13 +25,13 @@ export const getBook = (req, res, _next) => {
 }
 
 export const createBook = (req, res, _next) => {
-  const { number_passage, id_test } = req.body
+  const { name, image } = req.body
 
   const currentTime = dayjs.utc().format('YYYY-MM-DD HH:mm:ss')
 
   con.query(
-    'INSERT INTO passage (Id_test, Number_passage, CreatedAt) VALUES (?, ?, ?, ?)',
-    [id_test, number_passage, currentTime],
+    'INSERT INTO passage (Name, Image, CreatedAt, UpdatedAt) VALUES (?, ?, ?, ?)',
+    [name, image, currentTime, currentTime],
     (error, _result) => {
       if (error) {
         res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
