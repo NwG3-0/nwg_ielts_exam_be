@@ -92,11 +92,9 @@ app.listen(SERVER_PORT, async () => {
         port: 16663,
       },
     })
-
     client.on('error', () => {
       console.log('Redis Client has been connect error')
     })
-
     await client.connect()
     console.log('Connect to Redis server')
   } catch (error) {
