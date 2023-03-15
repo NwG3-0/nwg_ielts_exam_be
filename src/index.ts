@@ -11,7 +11,6 @@ import adminRoutes from './routers/admin.route'
 import publicRoutes from './routers/public.route'
 import privateRoutes from './routers/private.router'
 import vipMembersRoutes from './routers/vipMember.router'
-import { middleware } from './middlewares/passport'
 import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken'
 import { cors } from './utils/cors'
 import { StatusCodes, getReasonPhrase } from 'http-status-codes'
@@ -40,14 +39,14 @@ export let client
 
 app.use(cors)
 
-middleware()
+app.use(publicRoutes)
+
 app.use(authRoutes)
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: '30mb' }))
 
 app.use(adminRoutes)
-app.use(publicRoutes)
 
 // Verify access token
 app.use((req, res, next) => {
@@ -79,9 +78,9 @@ app.use((req, res, next) => {
   }
 })
 
+app.use(privateRoutes)
 app.use(vipAccountMiddleware)
 app.use(vipMembersRoutes)
-app.use(privateRoutes)
 
 app.listen(SERVER_PORT, async () => {
   try {
