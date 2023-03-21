@@ -9,7 +9,10 @@ import { cacheGetReadingContent } from '../middlewares/cache'
 const router = express.Router()
 
 router.get('/api/passage', passageController.getPassage)
+router.get('/api/passage-all', passageController.getAllPassageData)
+
 router.get('/api/test', testController.getTest)
+router.get('/api/test-all', testController.getAllTestData)
 router.get('/api/reading', cacheGetReadingContent, readingController.getReadingContent)
 router.get('/api/book', bookController.getBook)
 

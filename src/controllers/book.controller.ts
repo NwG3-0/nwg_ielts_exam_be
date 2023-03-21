@@ -16,13 +16,16 @@ export const getBook = (req, res, _next) => {
   const limit = Number(queryString.limit || DEFAULT_ITEM_PER_PAGE)
   const keyword = queryString.keyword || ''
 
-  con.query('SELECT COUNT(*) AS NumberOfBooks FROM book', (error, result: { NumberOfBooks: number }[]) => {
-    if (error) {
-      res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
-    } else {
-      total = result
-    }
-  })
+  con.query(
+    `SELECT COUNT(*) AS NumberOfBooks FROM book WHERE Name LIKE '%${keyword}%'`,
+    (error, result: { NumberOfBooks: number }[]) => {
+      if (error) {
+        res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+      } else {
+        total = result
+      }
+    },
+  )
 
   con.query(`SELECT * FROM book WHERE Name LIKE '%${keyword}%' LIMIT ?, ?`, [startPage, limit], (error, result) => {
     if (error) {

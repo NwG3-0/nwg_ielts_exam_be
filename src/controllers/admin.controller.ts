@@ -7,6 +7,7 @@ import utc from 'dayjs/plugin/utc'
 import jwt from 'jsonwebtoken'
 
 dayjs.extend(utc)
+
 const ONE_DAY_IN_SECOND = 86400
 
 export const registerAdmin = async (req, res, next) => {
