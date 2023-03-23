@@ -6,6 +6,9 @@ import { REDIS_KEYS } from '../keys'
 
 dayjs.extend(utc)
 
+const DEFAULT_START_PAGE = 1
+const DEFAULT_ITEM_PER_PAGE = 10
+
 export const getReadingContent = (req, res, _next) => {
   const { id_passage } = req.query
   try {
@@ -31,6 +34,61 @@ export const getReadingContent = (req, res, _next) => {
     }
   } catch (error) {
     console.log(error)
+  }
+}
+
+export const getAllReadingData = (req, res, _next) => {
+  const queryString = req.query
+
+  let total: { NumberOfReadings: number }[]
+  const startPage = Number(queryString.page || DEFAULT_START_PAGE) - 1
+  const limit = Number(queryString.limit || DEFAULT_ITEM_PER_PAGE)
+  const idPassage = Number(queryString.id_passage)
+
+  if (idPassage) {
+    con.query(
+      'SELECT COUNT(*) AS NumberOfReadings FROM reading INNER JOIN passage ON passage.id = reading.Id_passage WHERE Id_passage = ?',
+      [idPassage],
+      (error, result: any) => {
+        if (error) {
+          res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+        } else {
+          total = result
+        }
+      },
+    )
+
+    con.query(
+      'SELECT reading.id, reading.Content, reading.Title, passage.Number_passage, reading.CreatedAt FROM reading INNER JOIN passage ON passage.id = reading.Id_passage WHERE Id_passage = ? LIMIT ?, ?',
+      [idPassage, startPage, limit],
+      (error, result) => {
+        if (error) {
+          res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+        } else {
+          res.status(StatusCodes.OK).json({ success: true, data: result, total: total[0] })
+        }
+      },
+    )
+  } else {
+    con.query('SELECT COUNT(*) AS NumberOfReadings FROM reading', (error, result: { NumberOfReadings: number }[]) => {
+      if (error) {
+        res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+      } else {
+        total = result
+      }
+    })
+
+    con.query(
+      'SELECT reading.id, reading.Content, reading.Title, passage.Number_passage, reading.CreatedAt FROM passage INNER JOIN passage ON passage.id = reading.Id_passage LIMIT ?, ?',
+      [startPage, limit],
+      (error, result) => {
+        if (error) {
+          res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+        } else {
+          res.status(StatusCodes.OK).json({ success: true, data: result, total: total[0] })
+        }
+      },
+    )
   }
 }
 
