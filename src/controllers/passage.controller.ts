@@ -34,7 +34,7 @@ export const getAllPassageData = (req, res, _next) => {
 
   if (idTest) {
     con.query(
-      'SELECT COUNT(*) AS NumberOfPassages FROM passage INNER JOIN test ON test.id = test.Id_test WHERE Id_test = ?',
+      'SELECT COUNT(*) AS NumberOfPassages FROM passage INNER JOIN test ON test.id = passage.Id_test WHERE Id_test = ?',
       [idTest],
       (error, result: any) => {
         if (error) {
@@ -46,7 +46,7 @@ export const getAllPassageData = (req, res, _next) => {
     )
 
     con.query(
-      'SELECT passage.id, passage.NumberTest, passage.Id_book, test.NumberTest, passage.CreatedAt FROM passage INNER JOIN test ON test.id = passage.Id_book WHERE Id_test = ? LIMIT ?, ?',
+      'SELECT passage.id, passage.Number_passage, test.NumberTest, passage.CreatedAt FROM passage INNER JOIN test ON test.id = passage.Id_test WHERE Id_test = ? LIMIT ?, ?',
       [idTest, startPage, limit],
       (error, result) => {
         if (error) {
@@ -66,7 +66,7 @@ export const getAllPassageData = (req, res, _next) => {
     })
 
     con.query(
-      'SELECT passage.id, passage.NumberTest, passage.Id_book, test.NumberTest, passage.CreatedAt FROM passage INNER JOIN test ON test.id = passage.Id_test LIMIT ?, ?',
+      'SELECT passage.id, passage.Number_passage, test.NumberTest, passage.CreatedAt FROM passage INNER JOIN test ON test.id = passage.Id_test LIMIT ?, ?',
       [startPage, limit],
       (error, result) => {
         if (error) {

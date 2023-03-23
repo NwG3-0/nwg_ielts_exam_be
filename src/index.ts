@@ -23,7 +23,7 @@ const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 
 export const con = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'Phamlam@2k',
+  password: '12345',
   database: 'ielts',
 })
 
