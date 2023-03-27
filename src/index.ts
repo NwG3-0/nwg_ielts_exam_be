@@ -9,13 +9,13 @@ import bodyParser from 'body-parser'
 import authRoutes from './routers/auth.router'
 import adminRoutes from './routers/admin.route'
 import publicRoutes from './routers/public.route'
+import questionRoutes from './routers/question.router'
 import privateRoutes from './routers/private.router'
 import vipMembersRoutes from './routers/vipMember.router'
-import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken'
 import { cors } from './utils/cors'
-import { StatusCodes, getReasonPhrase } from 'http-status-codes'
 import { vipAccountMiddleware } from './middlewares'
 import { createClient } from 'redis'
+import { middleware } from './middlewares/passport'
 
 const DEFAULT_SERVER_PORT = 4000
 const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : DEFAULT_SERVER_PORT
@@ -23,7 +23,7 @@ const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 
 export const con = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '12345',
+  password: 'Phamlam@2k',
   database: 'ielts',
 })
 
@@ -41,44 +41,16 @@ app.use(cors)
 
 app.use(publicRoutes)
 
-app.use(authRoutes)
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: '30mb' }))
 
 app.use(adminRoutes)
-
-// Verify access token
-app.use((req, res, next) => {
-  try {
-    const authorizationHeader = req.headers?.authorization
-    if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
-      const token = authorizationHeader.split(' ')[1]
-      if (token) {
-        jsonwebtoken.verify(token, process.env.JWT_SECRET_KEY as string, function (err, decoded) {
-          if (err) {
-            if (err.name === TokenExpiredError.name) {
-              res.status(StatusCodes.BAD_REQUEST).json({ success: false, result: null, message: err.message })
-            } else {
-              res.status(StatusCodes.BAD_REQUEST).json({ success: false, result: null, message: err.message })
-            }
-          }
-        })
-      }
-    }
-
-    // no token found -> this is authentication API
-    return next()
-  } catch (error) {
-    console.error('[Verify JWT] Error: ', error)
-    res
-      .status(StatusCodes.UNAUTHORIZED)
-      .json({ success: false, data: null, message: getReasonPhrase(StatusCodes.UNAUTHORIZED) })
-    return
-  }
-})
+app.use(questionRoutes)
 
 app.use(privateRoutes)
+middleware()
+app.use(authRoutes)
+
 app.use(vipAccountMiddleware)
 app.use(vipMembersRoutes)
 

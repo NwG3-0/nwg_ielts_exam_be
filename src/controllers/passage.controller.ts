@@ -19,7 +19,7 @@ export const getPassage = (req, res, _next) => {
     if (error) {
       res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
     } else {
-      res.status(StatusCodes.OK).json({ success: true, data: result[0] })
+      res.status(StatusCodes.OK).json({ success: true, data: result })
     }
   })
 }

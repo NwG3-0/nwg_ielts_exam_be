@@ -17,9 +17,9 @@ export const getReadingContent = (req, res, _next) => {
         if (error) {
           res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
         } else {
-          await client.set(`${REDIS_KEYS.READING_CONTENT}-${id_passage}`, JSON.stringify(result[0]))
+          await client.set(`${REDIS_KEYS.READING_CONTENT}-${id_passage}`, JSON.stringify(result))
 
-          res.status(StatusCodes.OK).json({ success: true, data: result[0] })
+          res.status(StatusCodes.OK).json({ success: true, data: result })
         }
       })
     } else {
@@ -79,7 +79,7 @@ export const getAllReadingData = (req, res, _next) => {
     })
 
     con.query(
-      'SELECT reading.id, reading.Content, reading.Title, passage.Number_passage, reading.CreatedAt FROM passage INNER JOIN passage ON passage.id = reading.Id_passage LIMIT ?, ?',
+      'SELECT reading.id, reading.Content, reading.Title, passage.Number_passage, reading.CreatedAt FROM reading INNER JOIN passage ON passage.id = reading.Id_passage LIMIT ?, ?',
       [startPage, limit],
       (error, result) => {
         if (error) {
