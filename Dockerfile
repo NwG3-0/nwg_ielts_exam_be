@@ -40,6 +40,6 @@ CMD ["yarn", "start"]
 # ----------------------------------------
 FROM pre-base AS builder
 
-EXPOSE 4000
+EXPOSE 2005
 
 CMD ["tail", "-f", "/dev/null"]
