@@ -33,7 +33,7 @@ COPY --from=build --chown=nodejs:nodejs /app /app
 
 USER nodejs
 
-EXPOSE 4000
+EXPOSE 2005
 
 CMD ["yarn", "start"]
 

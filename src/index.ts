@@ -17,7 +17,7 @@ import { vipAccountMiddleware } from './middlewares'
 import { createClient } from 'redis'
 import { middleware } from './middlewares/passport'
 
-const DEFAULT_SERVER_PORT = 4000
+const DEFAULT_SERVER_PORT = 2005
 const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : DEFAULT_SERVER_PORT
 
 export const con = mysql.createConnection({
