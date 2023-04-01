@@ -13,3 +13,15 @@ export const cacheGetReadingContent = async (req, res, next) => {
     next()
   }
 }
+
+export const cacheAnswerReadingTest = async (req, res, next) => {
+  const { id_test } = req.query
+
+  const result = await client.get(`${REDIS_KEYS.READING_ANSWER}-${id_test}`)
+
+  if (result) {
+    res.status(StatusCodes.OK).json({ success: true, data: JSON.parse(result), message: 'Day la cache' })
+  } else {
+    next()
+  }
+}

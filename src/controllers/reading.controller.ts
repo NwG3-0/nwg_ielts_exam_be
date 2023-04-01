@@ -37,6 +37,26 @@ export const getReadingContent = (req, res, _next) => {
   }
 }
 
+export const getReadingContentByTest = async (req, res, _next) => {
+  try {
+    const { id_test } = req.query
+
+    con.query(
+      'SELECT reading.id, reading.Content, reading.Title, passage.Number_passage, reading.CreatedAt FROM reading INNER JOIN passage ON passage.id = reading.Id_passage WHERE passage.Id_test = ?',
+      [Number(id_test)],
+      (error, result) => {
+        if (error) {
+          res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+        } else {
+          res.status(StatusCodes.OK).json({ success: true, data: result })
+        }
+      },
+    )
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export const getAllReadingData = (req, res, _next) => {
   const queryString = req.query
 
@@ -93,13 +113,13 @@ export const getAllReadingData = (req, res, _next) => {
 }
 
 export const createReadingContent = (req, res, _next) => {
-  const { id_passage, content, title, type } = req.body
+  const { id_passage, content, title } = req.body
 
   const currentTime = dayjs.utc().format('YYYY-MM-DD HH:mm:ss')
 
   con.query(
-    'INSERT INTO reading (Id_passage, Content, Title, Type, CreatedAt) VALUES (?, ?, ?, ?, ?, ?)',
-    [id_passage, content, title, type, currentTime],
+    'INSERT INTO reading (Id_passage, Content, Title, CreatedAt) VALUES (?, ?, ?, ?)',
+    [id_passage, content, title, currentTime],
     (error, _result) => {
       if (error) {
         res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
