@@ -2,27 +2,20 @@ version: '3'
 
 services:
   tita_web:
-    container_name: english_project_be
-    image: english_project_be:latest
+    container_name: english_be_api
+    image: english_be_api:latest
     build:
       context: .
       target: release
     environment:
       APP_ENV: production
-      SERVER_PORT: 4000
-      MONGODB_HOST: 127.0.0.1
-      MONGODB_PORT: 27017
-      MONGODB_DATABASE: 'English'
+      SERVER_PORT: 2005
       AUTH_SALT_VALUE: 5
-      JWT_SECRET_KEY: 'secret_key'
+      JWT_SECRET_KEY: admin_nwg
       JWT_EXPIRATION_DURATION: 86400
-      MAIL_MAILER: 'smtp'
-      MAIL_HOST: 'smtp.gmail.com'
-      MAIL_PORT: 587
-      MAIL_USERNAME: 'mailam1309@gmail.com'
-      MAIL_PASSWORD: 'uuaoszipjvmnhwiz'
-      MAIL_ENCRYPTION: 'TLS'
-      MAIL_FROM_ADDRESS: 'mailam1309@gmail.com'
-      MAIL_FROM_NAME: 'Lam'
+      FACEBOOK_CLIENT_ID: 577321971010482
+      FACEBOOK_CLIENT_SECRET: 4f6c41e21f45fd6df3585d400c8700da
+      AUTH_ADMIN: $2a$20$eAj6gubaGzR/Z3Kls9LdnOpFuJ/eHEvsVFxcj8Kw9clUD4NNutZSa
+      REDIS_URL: redis://ielts-cache-db:CSS1oCiwEiNcXmxAgNVQLotY1xrdtrP8@redis-16663.c292.ap-southeast-1-1.ec2.cloud.redislabs.com:16663
     ports:
       - 4000:4000
