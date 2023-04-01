@@ -21,8 +21,9 @@ const DEFAULT_SERVER_PORT = 2005
 const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : DEFAULT_SERVER_PORT
 
 export const con = mysql.createConnection({
-  host: 'localhost',
+  host: '45.124.95.85',
   user: 'root',
+  port: 3306,
   password: 'Phamlam@2k',
   database: 'ielts',
 })
@@ -38,11 +39,11 @@ app.use(morgan('combined'))
 export let client
 
 app.use(cors)
-app.use(publicRoutes)
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: '30mb' }))
 
+app.use(publicRoutes)
 app.use(adminRoutes)
 app.use(questionRoutes)
 
