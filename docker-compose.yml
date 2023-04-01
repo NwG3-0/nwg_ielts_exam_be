@@ -18,4 +18,4 @@ services:
       AUTH_ADMIN: $2a$20$eAj6gubaGzR/Z3Kls9LdnOpFuJ/eHEvsVFxcj8Kw9clUD4NNutZSa
       REDIS_URL: redis://ielts-cache-db:CSS1oCiwEiNcXmxAgNVQLotY1xrdtrP8@redis-16663.c292.ap-southeast-1-1.ec2.cloud.redislabs.com:16663
     ports:
-      - 4000:4000
+      - 2005:2005
