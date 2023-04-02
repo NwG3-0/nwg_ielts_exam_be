@@ -38,10 +38,10 @@ app.use(morgan('combined'))
 export let client
 
 app.use(cors)
+app.use(publicRoutes)
+
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json({ limit: '30mb' }))
-
-app.use(publicRoutes)
 
 app.use(adminRoutes)
 app.use(questionRoutes)
