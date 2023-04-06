@@ -4,6 +4,12 @@ import jsonwebtoken, { TokenExpiredError } from 'jsonwebtoken'
 export const privateMiddleware = (req, res, next) => {
   try {
     const authorizationHeader = req.headers?.authorization
+    if (!authorizationHeader || authorizationHeader === '') {
+      res.status(StatusCodes.BAD_REQUEST).json({ success: false, result: null, message: 'Underfined jwt token' })
+
+      throw new Error('Underfined jwt token')
+    }
+
     if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
       const token = authorizationHeader.split(' ')[1]
       if (token) {
@@ -14,6 +20,8 @@ export const privateMiddleware = (req, res, next) => {
             } else {
               res.status(StatusCodes.BAD_REQUEST).json({ success: false, result: null, message: err.message })
             }
+
+            throw new Error(err)
           }
         })
       }
@@ -26,6 +34,7 @@ export const privateMiddleware = (req, res, next) => {
     res
       .status(StatusCodes.UNAUTHORIZED)
       .json({ success: false, data: null, message: getReasonPhrase(StatusCodes.UNAUTHORIZED) })
-    return
+
+    throw new Error('Something went wrong')
   }
 }

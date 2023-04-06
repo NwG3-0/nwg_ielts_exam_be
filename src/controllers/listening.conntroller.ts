@@ -9,11 +9,11 @@ dayjs.extend(utc)
 const DEFAULT_START_PAGE = 1
 const DEFAULT_ITEM_PER_PAGE = 10
 
-export const getReadingContent = (req, res, _next) => {
-  const { id_passage } = req.query
+export const getListeningContent = (req, res, _next) => {
+  const { id_passage } = req.body
   try {
     if (id_passage) {
-      con.query('SELECT * FROM reading WHERE Id_passage = ?', [Number(id_passage)], async (error, result) => {
+      con.query('SELECT * FROM listening WHERE Id_passage = ?', [Number(id_passage)], async (error, result) => {
         if (error) {
           res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
         } else {
@@ -23,7 +23,7 @@ export const getReadingContent = (req, res, _next) => {
         }
       })
     } else {
-      con.query('SELECT * FROM reading', (error, result) => {
+      con.query('SELECT * FROM listening', (error, result) => {
         if (error) {
           res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
         } else {
@@ -37,12 +37,12 @@ export const getReadingContent = (req, res, _next) => {
   }
 }
 
-export const getReadingContentByTest = async (req, res, next) => {
+export const getListeningContentByTest = async (req, res, next) => {
   try {
     const { id_test } = req.body
 
     con.query(
-      'SELECT reading.id, reading.Content, reading.Title, passage.Number_passage, reading.CreatedAt FROM reading INNER JOIN passage ON passage.id = reading.Id_passage WHERE passage.Id_test = ?',
+      'SELECT listening.id, listening.Audio, passage.Number_passage, listening.CreatedAt FROM listening INNER JOIN passage ON passage.id = listening.Id_passage WHERE passage.Id_test = ?',
       [Number(id_test)],
       (error, result) => {
         if (error) {
@@ -57,17 +57,17 @@ export const getReadingContentByTest = async (req, res, next) => {
   }
 }
 
-export const getAllReadingData = (req, res, _next) => {
+export const getAllListeningData = (req, res, _next) => {
   const queryString = req.query
 
-  let total: { NumberOfReadings: number }[]
+  let total: { NumberOfListenings: number }[]
   const startPage = Number(queryString.page || DEFAULT_START_PAGE) - 1
   const limit = Number(queryString.limit || DEFAULT_ITEM_PER_PAGE)
   const idPassage = Number(queryString.id_passage)
 
   if (idPassage) {
     con.query(
-      'SELECT COUNT(*) AS NumberOfReadings FROM reading INNER JOIN passage ON passage.id = reading.Id_passage WHERE Id_passage = ?',
+      'SELECT COUNT(*) AS NumberOfListenings FROM listening INNER JOIN passage ON passage.id = listening.Id_passage WHERE Id_passage = ?',
       [idPassage],
       (error, result: any) => {
         if (error) {
@@ -79,7 +79,7 @@ export const getAllReadingData = (req, res, _next) => {
     )
 
     con.query(
-      'SELECT reading.id, reading.Content, reading.Title, passage.Number_passage, reading.CreatedAt FROM reading INNER JOIN passage ON passage.id = reading.Id_passage WHERE Id_passage = ? LIMIT ?, ?',
+      'SELECT listening.id, listening.Content, listening.Title, passage.Number_passage, listening.CreatedAt FROM listening INNER JOIN passage ON passage.id = listening.Id_passage WHERE Id_passage = ? LIMIT ?, ?',
       [idPassage, startPage, limit],
       (error, result) => {
         if (error) {
@@ -90,16 +90,19 @@ export const getAllReadingData = (req, res, _next) => {
       },
     )
   } else {
-    con.query('SELECT COUNT(*) AS NumberOfReadings FROM reading', (error, result: { NumberOfReadings: number }[]) => {
-      if (error) {
-        res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
-      } else {
-        total = result
-      }
-    })
+    con.query(
+      'SELECT COUNT(*) AS NumberOfListenings FROM listening',
+      (error, result: { NumberOfListenings: number }[]) => {
+        if (error) {
+          res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+        } else {
+          total = result
+        }
+      },
+    )
 
     con.query(
-      'SELECT reading.id, reading.Content, reading.Title, passage.Number_passage, reading.CreatedAt FROM reading INNER JOIN passage ON passage.id = reading.Id_passage LIMIT ?, ?',
+      'SELECT listening.id, listening.Audio, passage.Number_passage, listening.CreatedAt FROM listening INNER JOIN passage ON passage.id = listening.Id_passage LIMIT ?, ?',
       [startPage, limit],
       (error, result) => {
         if (error) {
@@ -112,19 +115,19 @@ export const getAllReadingData = (req, res, _next) => {
   }
 }
 
-export const createReadingContent = (req, res, _next) => {
-  const { id_passage, content, title } = req.body
+export const createListeningContent = (req, res, _next) => {
+  const { id_passage, audio } = req.body
 
   const currentTime = dayjs.utc().format('YYYY-MM-DD HH:mm:ss')
 
   con.query(
-    'INSERT INTO reading (Id_passage, Content, Title, CreatedAt) VALUES (?, ?, ?, ?)',
-    [id_passage, content, title, currentTime],
+    'INSERT INTO listening (Id_passage, Audio, CreatedAt) VALUES (?, ?, ?)',
+    [id_passage, audio, currentTime],
     (error, _result) => {
       if (error) {
         res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
       } else {
-        res.status(StatusCodes.OK).json({ success: true, data: null, message: 'Create reading content success ' })
+        res.status(StatusCodes.OK).json({ success: true, data: null, message: 'Create listening content success ' })
       }
     },
   )

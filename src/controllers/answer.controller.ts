@@ -7,7 +7,7 @@ import { REDIS_KEYS } from '../keys'
 dayjs.extend(utc)
 
 export const getAnswerOfTest = async (req, res, _next) => {
-  const { id_test } = req.query
+  const { id_test } = req.body
 
   if (!id_test) {
     res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: 'Invalid ID Book' })

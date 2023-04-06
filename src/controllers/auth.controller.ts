@@ -1,7 +1,8 @@
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import jwt from 'jsonwebtoken'
-import { con } from '../index'
+import { client, con } from '../index'
+import { StatusCodes, getReasonPhrase } from 'http-status-codes'
 
 dayjs.extend(utc)
 const ONE_DAY_IN_SECOND = 86400
@@ -31,6 +32,7 @@ export const authFacebook = async (req, res, next) => {
               res.send({
                 success: true,
                 data: {
+                  id: profile.id,
                   name: profile.displayName,
                   email: profile.emails[0].value,
                   image: profile.photos[0].value,
@@ -42,7 +44,7 @@ export const authFacebook = async (req, res, next) => {
         )
       } else {
         const jwtToken = jwt.sign(
-          { name: results[0].Name, email: results[0].Email, isActived: results[0].IsActived },
+          { id: results[0].id, name: results[0].Name, email: results[0].Email, isActived: results[0].IsActived },
           process.env.JWT_SECRET_KEY ?? '',
           {
             expiresIn: Number(process.env.JWT_EXPIRATION_DURATION ?? ONE_DAY_IN_SECOND),
@@ -52,6 +54,7 @@ export const authFacebook = async (req, res, next) => {
         res.send({
           success: true,
           data: {
+            id: results[0].id,
             name: results[0].Name,
             email: results[0].Email,
             image: results[0].Image,
@@ -62,5 +65,26 @@ export const authFacebook = async (req, res, next) => {
     })
   } catch (error) {
     next(error, false)
+  }
+}
+
+export const logout = async (req, res, next) => {
+  try {
+    const { token } = req.body
+
+    if (!token) {
+      res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: 'Token invalid' })
+
+      return
+    }
+
+    await client.set(token, 'blacklisted', 'EX')
+
+    res.status(StatusCodes.OK).json({ success: true, data: null, message: 'Logout successfully' })
+  } catch (error) {
+    console.log('[log out] Error: ', error)
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, data: null, message: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR) })
   }
 }

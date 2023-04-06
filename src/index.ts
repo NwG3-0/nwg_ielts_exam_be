@@ -6,14 +6,13 @@ import mysql from 'mysql2'
 import express from 'express'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
+import fs from 'fs'
 import authRoutes from './routers/auth.router'
 import adminRoutes from './routers/admin.route'
 import publicRoutes from './routers/public.route'
-import questionRoutes from './routers/question.router'
 import privateRoutes from './routers/private.router'
 import vipMembersRoutes from './routers/vipMember.router'
 import { cors } from './utils/cors'
-import { vipAccountMiddleware } from './middlewares'
 import { createClient } from 'redis'
 import { middleware } from './middlewares/passport'
 
@@ -21,9 +20,8 @@ const DEFAULT_SERVER_PORT = 2005
 const SERVER_PORT = process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : DEFAULT_SERVER_PORT
 
 export const con = mysql.createConnection({
-  host: '45.124.95.85',
+  host: 'localhost',
   user: 'root',
-  port: 3306,
   password: 'Phamlam@2k',
   database: 'ielts',
 })
@@ -34,8 +32,10 @@ con.connect((error) => {
   }
 })
 
+const accessLogStream = fs.createWriteStream('access.log', { flags: 'a' })
+
 const app = express()
-app.use(morgan('combined'))
+app.use(morgan('combined', { stream: accessLogStream }))
 export let client
 
 app.use(cors)
@@ -45,13 +45,12 @@ app.use(bodyParser.json({ limit: '30mb' }))
 
 app.use(publicRoutes)
 app.use(adminRoutes)
-app.use(questionRoutes)
 
 app.use(privateRoutes)
+
 middleware()
 app.use(authRoutes)
 
-app.use(vipAccountMiddleware)
 app.use(vipMembersRoutes)
 
 app.listen(SERVER_PORT, async () => {
