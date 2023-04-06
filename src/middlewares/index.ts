@@ -24,8 +24,8 @@ export const vipAccountMiddleware = (req: any, res, next) => {
     if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
       const token = authorizationHeader.split(' ')[1]
       if (token) {
-        jsonwebtoken.verify(token, process.env.JWT_SECRET_KEY as string, function (err, decoded: any) {
-          if (err || !decoded.isActived) {
+        jsonwebtoken.verify(token, process.env.JWT_ACTIVE_USER as string, function (err, decoded: any) {
+          if (err) {
             res
               .status(StatusCodes.BAD_REQUEST)
               .json({ success: false, data: null, message: 'Please active the account Vip' })

@@ -6,7 +6,7 @@ import { con } from '..'
 dayjs.extend(utc)
 
 export const getReadingQuestion = (req, res, _next) => {
-  const { id_passage } = req.body
+  const { id_passage } = req.query
 
   if (!id_passage) {
     res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: 'Invalid ID Book' })
@@ -22,7 +22,7 @@ export const getReadingQuestion = (req, res, _next) => {
 }
 
 export const getReadingQuestionDetail = (req, res, next) => {
-  const { id_test } = req.body
+  const { id_test } = req.query
 
   if (!id_test) {
     res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: 'Invalid id test' })
@@ -60,7 +60,7 @@ export const createReadingQuestion = (req, res, _next) => {
 }
 
 export const getListeningQuestionDetail = (req, res, next) => {
-  const { id_test } = req.body
+  const { id_test } = req.query
 
   if (!id_test) {
     res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: 'Invalid ID Book' })

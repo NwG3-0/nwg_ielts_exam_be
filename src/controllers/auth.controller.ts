@@ -43,13 +43,11 @@ export const authFacebook = async (req, res, next) => {
           },
         )
       } else {
-        const jwtToken = jwt.sign(
-          { id: results[0].id, name: results[0].Name, email: results[0].Email, isActived: results[0].IsActived },
-          process.env.JWT_SECRET_KEY ?? '',
-          {
-            expiresIn: Number(process.env.JWT_EXPIRATION_DURATION ?? ONE_DAY_IN_SECOND),
-          },
-        )
+        let key = results[0].IsActived ? process.env.JWT_ACTIVE_USER : process.env.JWT_SECRET_KEY
+
+        const jwtToken = jwt.sign({ id: results[0].id, name: results[0].Name, email: results[0].Email }, key ?? '', {
+          expiresIn: Number(process.env.JWT_EXPIRATION_DURATION ?? ONE_DAY_IN_SECOND),
+        })
 
         res.send({
           success: true,

@@ -39,7 +39,7 @@ export const getListeningContent = (req, res, _next) => {
 
 export const getListeningContentByTest = async (req, res, next) => {
   try {
-    const { id_test } = req.body
+    const { id_test } = req.query
 
     con.query(
       'SELECT listening.id, listening.Audio, passage.Number_passage, listening.CreatedAt FROM listening INNER JOIN passage ON passage.id = listening.Id_passage WHERE passage.Id_test = ?',

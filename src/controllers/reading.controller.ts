@@ -39,7 +39,7 @@ export const getReadingContent = (req, res, _next) => {
 
 export const getReadingContentByTest = async (req, res, next) => {
   try {
-    const { id_test } = req.body
+    const { id_test } = req.query
 
     con.query(
       'SELECT reading.id, reading.Content, reading.Title, passage.Number_passage, reading.CreatedAt FROM reading INNER JOIN passage ON passage.id = reading.Id_passage WHERE passage.Id_test = ?',

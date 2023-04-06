@@ -9,7 +9,7 @@ const DEFAULT_START_PAGE = 1
 const DEFAULT_ITEM_PER_PAGE = 10
 
 export const getResultOfTest = async (req, res, _next) => {
-  const queryString = req.body
+  const queryString = req.query
 
   let total: { NumberOfResults: number }[]
   const startPage = Number(queryString.page || DEFAULT_START_PAGE) - 1
