@@ -58,7 +58,7 @@ export const loginAdmin = (req, res, _next) => {
 
       const jwtToken = jwt.sign(
         { email: result[0].Username, isActived: result[0].IsActived },
-        process.env.JWT_SECRET_KEY ?? '',
+        process.env.JWT_ADMIN_NWG ?? '',
         {
           expiresIn: Number(process.env.JWT_EXPIRATION_DURATION ?? ONE_DAY_IN_SECOND),
         },
