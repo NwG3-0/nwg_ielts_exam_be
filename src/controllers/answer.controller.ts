@@ -41,3 +41,37 @@ export const createAnswerOfTest = (req, res, _next) => {
     },
   )
 }
+
+export const getAnswerListeningOfTest = async (req, res, _next) => {
+  const { id_test } = req.query
+
+  if (!id_test) {
+    res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: 'Invalid ID Book' })
+  }
+
+  con.query('SELECT * FROM answer_listening WHERE Id_test = ?', [Number(id_test)], async (error, result) => {
+    if (error) {
+      res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+    } else {
+      res.status(StatusCodes.OK).json({ success: true, data: result })
+    }
+  })
+}
+
+export const createAnswerListeningOfTest = (req, res, _next) => {
+  const { id_test, answer, keyword, explain, where } = req.body
+
+  const currentTime = dayjs.utc().format('YYYY-MM-DD HH:mm:ss')
+
+  con.query(
+    'INSERT INTO answer_listening (Id_test, Answer, Keyword, Explaining, WhereInfo, CreatedAt) VALUES (?, ?, ?, ?, ?, ?)',
+    [id_test, answer, keyword, explain, where, currentTime],
+    (error, _result) => {
+      if (error) {
+        res.status(StatusCodes.BAD_REQUEST).json({ success: false, data: null, message: error })
+      } else {
+        res.status(StatusCodes.OK).json({ success: true, data: null, message: 'Create reading content success ' })
+      }
+    },
+  )
+}

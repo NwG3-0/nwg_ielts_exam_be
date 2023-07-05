@@ -18,23 +18,19 @@ router.get('/api/passage', passageController.getPassage)
 router.get('/api/passage-all', passageController.getAllPassageData)
 router.post('/api/passage/create', privateMiddleware, authAdminMiddleware, passageController.createPassage)
 
-router.post('/api/reading/create', privateMiddleware, authAdminMiddleware, readingController.createReadingContent)
-router.post('/api/test/create', privateMiddleware, authAdminMiddleware, testController.createTest)
-router.post('/api/book/create', privateMiddleware, authAdminMiddleware, bookController.createBook)
-router.post(
-  '/api/reading_question/create',
-  privateMiddleware,
-  authAdminMiddleware,
-  questionController.createReadingQuestion,
-)
-router.post('/api/question-reading/create', privateMiddleware, questionController.createReadingQuestion)
-router.post('/api/answer_reading/create', privateMiddleware, authAdminMiddleware, answerController.createAnswerOfTest)
+router.post('/api/reading/create', authAdminMiddleware, readingController.createReadingContent)
+router.post('/api/test/create', authAdminMiddleware, testController.createTest)
+router.post('/api/book/create', authAdminMiddleware, bookController.createBook)
+router.post('/api/reading_question/create', authAdminMiddleware, questionController.createReadingQuestion)
+router.post('/api/question-reading/create', authAdminMiddleware, questionController.createReadingQuestion)
+router.post('/api/answer_reading/create', authAdminMiddleware, answerController.createAnswerOfTest)
+router.post('/api/answer_listening/create', authAdminMiddleware, answerController.createAnswerListeningOfTest)
 
 //Router check active user
 router.post('/api/check-active-user', privateMiddleware, checkActiveUserController.checkUserActive)
 
-router.post('/api/listening/create', privateMiddleware, authAdminMiddleware, listeningController.createListeningContent)
-router.post('/api/question-listening/create', privateMiddleware, questionController.createListeningQuestion)
+router.post('/api/listening/create', authAdminMiddleware, listeningController.createListeningContent)
+router.post('/api/question-listening/create', questionController.createListeningQuestion)
 
-router.get('/api/question-reading', privateMiddleware, authAdminMiddleware, questionController.getReadingQuestion)
+router.get('/api/question-reading', authAdminMiddleware, questionController.getReadingQuestion)
 export default router
